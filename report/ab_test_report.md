@@ -41,7 +41,7 @@ users** and **no users in both groups**.
 
 ## 4. Segment findings
 
-- **Effect grows with exposure.** Users who saw 50+ ads convert at ~5% in the
+- **Effect grows with exposure.** Users who saw 50+ ads convert at ~13% in the
   treatment group with the largest lift over control; low-exposure users
   (1–10 ads) show small absolute rates in both groups. Frequency of exposure —
   not mere assignment — is where the value concentrates.

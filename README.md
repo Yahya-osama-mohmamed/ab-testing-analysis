@@ -55,3 +55,16 @@ python -m venv venv && venv\Scripts\pip install -r requirements.txt
 python -m src.run_analysis          # computes report/results.json
 jupyter nbconvert --execute --inplace notebooks/*.ipynb
 ```
+
+---
+
+## 🚢 Published
+
+[![CI](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml)
+[![Pages](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml)
+
+The report and notebooks are published at **https://yahya-osama-mohmamed.github.io/ab-testing-analysis/** — rebuilt by GitHub Actions on every push.
+
+There is no container here: nothing in this repo is a service, and wrapping a
+web shell around an analysis to have something to deploy would be inventing a
+product that does not exist. The analysis is the deliverable.

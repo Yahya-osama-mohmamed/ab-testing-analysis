@@ -1,5 +1,18 @@
 # 📊 A/B Testing — Ad Campaign Effectiveness Analysis
 
+## 🚢 Published
+
+[![CI](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml)
+[![Pages](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml)
+
+The report and notebooks are published at **https://yahya-osama-mohmamed.github.io/ab-testing-analysis/** — rebuilt by GitHub Actions on every push.
+
+There is no container here: nothing in this repo is a service, and wrapping a
+web shell around an analysis to have something to deploy would be inventing a
+product that does not exist. The analysis is the deliverable.
+
+---
+
 **➡️ Read the main deliverable first: [`report/ab_test_report.md`](report/ab_test_report.md)** —
 a standalone business report a non-technical stakeholder can act on.
 
@@ -44,6 +57,7 @@ notebooks/01_eda_and_sanity_checks.ipynb   group balance, SRM, contamination che
 notebooks/02_hypothesis_testing.ipynb      z-test, chi-square, CI, power — the error-bar chart
 notebooks/03_segmentation_analysis.ipynb   effects by exposure tercile and day
 src/stats_utils.py                         reusable, documented test functions
+tests/test_stats_utils.py                  17 tests, incl. one reproducing the headline
 src/run_analysis.py                        end-to-end -> report/results.json
 report/ab_test_report.md                   the business deliverable
 ```
@@ -55,16 +69,3 @@ python -m venv venv && venv\Scripts\pip install -r requirements.txt
 python -m src.run_analysis          # computes report/results.json
 jupyter nbconvert --execute --inplace notebooks/*.ipynb
 ```
-
----
-
-## 🚢 Published
-
-[![CI](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/ci.yml)
-[![Pages](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml/badge.svg)](https://github.com/Yahya-osama-mohmamed/ab-testing-analysis/actions/workflows/pages.yml)
-
-The report and notebooks are published at **https://yahya-osama-mohmamed.github.io/ab-testing-analysis/** — rebuilt by GitHub Actions on every push.
-
-There is no container here: nothing in this repo is a service, and wrapping a
-web shell around an analysis to have something to deploy would be inventing a
-product that does not exist. The analysis is the deliverable.

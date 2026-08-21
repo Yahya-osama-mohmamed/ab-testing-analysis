@@ -65,7 +65,12 @@ report/ab_test_report.md                   the business deliverable
 ## Reproduce
 
 ```bash
-python -m venv venv && venv\Scripts\pip install -r requirements.txt
-python -m src.run_analysis          # computes report/results.json
-jupyter nbconvert --execute --inplace notebooks/*.ipynb
+uv sync            # creates .venv and installs the locked dependency tree
+uv run python -m src.run_analysis          # computes report/results.json
+uv run jupyter nbconvert --execute --inplace notebooks/*.ipynb
 ```
+
+Dependencies are managed with [uv](https://docs.astral.sh/uv/): `pyproject.toml`
+declares them, `uv.lock` pins the entire transitive tree, and `uv sync` installs
+exactly that. The lockfile is what CI and the container build install from, so
+"works on my machine" and "works in the image" are the same resolution.

@@ -25,12 +25,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.11"
-
-      - name: Install nbconvert
-        run: pip install nbconvert jupyter
+          version: "0.12.5"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Render
         # The stakeholder report is the landing page; the notebooks are the
@@ -38,8 +38,8 @@ jobs:
         # re-executed - the source CSV is a Kaggle download kept out of git.
         run: |
           mkdir -p site
-          jupyter nbconvert --to html --output-dir site notebooks/*.ipynb
-          python - <<'PY'
+          uv run --frozen --with nbconvert --with jupyter jupyter nbconvert --to html --output-dir site notebooks/*.ipynb
+          uv run --frozen python - <<'PY'
           import json, pathlib, html
 
           results = json.loads(pathlib.Path("report/results.json").read_text())

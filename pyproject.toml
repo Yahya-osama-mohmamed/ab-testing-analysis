@@ -1,0 +1,56 @@
+[project]
+name = "ab-testing-analysis"
+version = "1.0.0"
+description = "A/B test analysis with experiment-integrity checks before any outcome is read"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# The stats functions and their tests only need the numerical stack;
+# plotting and notebook tooling are dev extras.
+dependencies = [
+    "numpy==1.26.4",
+    "pandas==2.2.3",
+    "scipy==1.14.1",
+    "statsmodels==0.14.4",
+]
+
+[dependency-groups]
+dev = [
+    "matplotlib==3.9.3",
+    "seaborn==0.13.2",
+    "ipykernel==7.3.0",
+    "nbconvert==7.17.1",
+    "pytest==8.3.4",
+    "pytest-cov>=6",
+    "ruff==0.16.4",
+]
+
+[tool.ruff]
+# Notebooks are deliberately excluded: `import a; import b` on one line and
+# imports part-way down a file are normal notebook style, and enforcing library
+# rules on exploratory cells produces noise rather than quality.
+line-length = 110
+target-version = "py311"
+extend-exclude = [".venv", "venv", "mlruns", "dashboard", "data", "*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# B008 is the FastAPI dependency-injection idiom (Depends(), File()), not a bug.
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+# The project is not installed as a package, so make the root importable.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.uv]
+# These are applications, not libraries: install the dependencies, not the project.
+package = false

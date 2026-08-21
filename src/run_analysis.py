@@ -6,8 +6,11 @@ from pathlib import Path
 import pandas as pd
 
 from src.stats_utils import (
-    chi_square_independence, required_sample_size, retrospective_power,
-    srm_check, two_proportion_ztest,
+    chi_square_independence,
+    required_sample_size,
+    retrospective_power,
+    srm_check,
+    two_proportion_ztest,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

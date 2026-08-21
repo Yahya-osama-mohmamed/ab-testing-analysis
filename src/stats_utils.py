@@ -8,7 +8,9 @@ import numpy as np
 from scipy import stats
 from statsmodels.stats.power import NormalIndPower
 from statsmodels.stats.proportion import (
-    confint_proportions_2indep, proportion_effectsize, proportions_ztest,
+    confint_proportions_2indep,
+    proportion_effectsize,
+    proportions_ztest,
 )
 
 

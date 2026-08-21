@@ -1,0 +1,106 @@
+name: Publish analysis
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "notebooks/**"
+      - "report/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Render report and notebooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install nbconvert
+        run: pip install nbconvert jupyter
+
+      - name: Render
+        # The stakeholder report is the landing page; the notebooks are the
+        # working detail behind it. Published as committed rather than
+        # re-executed - the source CSV is a Kaggle download kept out of git.
+        run: |
+          mkdir -p site
+          jupyter nbconvert --to html --output-dir site notebooks/*.ipynb
+          python - <<'PY'
+          import json, pathlib, html
+
+          results = json.loads(pathlib.Path("report/results.json").read_text())
+          primary = results["primary"]
+          srm = results["srm"]
+          report = pathlib.Path("report/ab_test_report.md").read_text(encoding="utf-8")
+
+          notebooks = sorted(p.name for p in pathlib.Path("site").glob("*.html"))
+          links = "\n".join(
+              f'<li><a href="{n}">{html.escape(n.replace(".html", "").replace("_", " "))}</a></li>'
+              for n in notebooks
+          )
+
+          page = f"""<!doctype html>
+          <html lang="en"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>Marketing A/B Test Analysis</title>
+          <style>
+            body {{ font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 820px;
+                   margin: 3rem auto; padding: 0 1.2rem; line-height: 1.6; color: #1a1a1a; }}
+            .kpi {{ display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }}
+            .kpi div {{ flex: 1 1 160px; border: 1px solid #dde; border-radius: 8px; padding: .9rem; }}
+            .kpi b {{ display: block; font-size: 1.5rem; color: #1F4E79; }}
+            pre {{ white-space: pre-wrap; background: #f7f8fb; padding: 1rem; border-radius: 8px; }}
+            a {{ color: #1F4E79; }}
+          </style></head><body>
+          <h1>Marketing A/B Test Analysis</h1>
+          <p>Ad campaign versus public-service-announcement control,
+             {results['n_users']:,} users.</p>
+          <div class="kpi">
+            <div><b>+{primary['rel_lift'] * 100:.1f}%</b>relative lift</div>
+            <div><b>{primary['rate_a'] * 100:.3f}%</b>treatment conversion</div>
+            <div><b>{primary['rate_b'] * 100:.3f}%</b>control conversion</div>
+            <div><b>{srm['p_value']:.4f}</b>SRM check p-value</div>
+          </div>
+          <p>95% CI on the absolute lift:
+             [+{primary['ci95_low'] * 100:.2f}pp, +{primary['ci95_high'] * 100:.2f}pp].
+             Experiment integrity was validated before the outcome was read.</p>
+          <h2>Notebooks</h2>
+          <ul>{links}</ul>
+          <h2>Full report</h2>
+          <pre>{html.escape(report)}</pre>
+          </body></html>
+          """
+          pathlib.Path("site/index.html").write_text(page, encoding="utf-8")
+          print("wrote site/index.html")
+          PY
+          cp -r notebooks/figures site/figures 2>/dev/null || true
+          ls -lh site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

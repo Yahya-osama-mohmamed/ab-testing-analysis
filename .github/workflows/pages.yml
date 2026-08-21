@@ -90,7 +90,7 @@ jobs:
           cp -r notebooks/figures site/figures 2>/dev/null || true
           ls -lh site
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
